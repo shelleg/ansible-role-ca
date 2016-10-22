@@ -1,0 +1,27 @@
+---
+- name: "Genereate Certs for Infra server || CA server"
+  shell: 'openssl genrsa -out {{ item.cname }}-priv-key.pem 2048'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_items:
+  - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.swarm.swarm_workers }}"
+  - "{{ shelleg_hosts.swarm.swarm_managers }}"
+
+- name: "Create certificate request for Infra server || CA server"
+  shell: 'openssl req -subj "/CN={{ item.cname }}" -new -key "{{ item.cname }}"-priv-key.pem -out "{{ item.cname }}".csr'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_items:
+  - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.swarm.swarm_workers }}"
+  - "{{ shelleg_hosts.swarm.swarm_managers }}"
+
+- name: "Generate the CA trusted certificate"
+  shell: 'sudo openssl x509 -req -days 1825 -in "{{ item.cname }}".csr -CA ca.pem -CAkey ca-priv-key.pem -CAcreateserial -out "{{ item.cname }}"-cert.pem -extensions v3_req -extfile /usr/lib/ssl/openssl.cnf'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_items:
+  - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.swarm.swarm_workers }}"
+  - "{{ shelleg_hosts.swarm.swarm_managers }}"

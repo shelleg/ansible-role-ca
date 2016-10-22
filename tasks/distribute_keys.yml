@@ -1,0 +1,46 @@
+---
+
+- name: "Ensures {{ ca_defult_ssl_certs_dir }} and {{ ca_defult_ssl_key_dir }} dirs exist"
+  file: path="{{ item }}" state=directory owner=root group=root mode=0750 recurse=yes
+  with_items:
+  - /etc/pki/tls
+  - "{{ ca_defult_ssl_certs_dir }}"
+  - "{{ ca_defult_ssl_key_dir }}"
+
+
+- block:
+
+    - name: "copy keys from infra to ansible machine for distribution"
+      copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_key }}" dest="{{ ca_defult_ssl_key_dir }}/{{ item.ssl_key }}"
+      with_items:
+      - "{{ shelleg_hosts.infra }}"
+      - "{{ shelleg_hosts.swarm.swarm_workers }}"
+      - "{{ shelleg_hosts.swarm.swarm_managers }}"
+
+    - name: "copy certs from infra to ansible machine for distribution"
+      copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_cert }}" dest="{{ ca_defult_ssl_certs_dir }}/{{ item.ssl_cert }}"
+      with_items:
+      - "{{ shelleg_hosts.infra }}"
+      - "{{ shelleg_hosts.swarm.swarm_workers }}"
+      - "{{ shelleg_hosts.swarm.swarm_managers }}"
+
+  when: inventory_hostname == "{{ shelleg.domain_prefix }}-{{ item.cname }}"
+
+# Root CA key/cert
+
+- name: "copy {{ ca_key }} to {{ ca_defult_ssl_key_dir }}"
+  copy: src="{{ ca_distribution_certs_dir }}/{{ item }}" dest="{{ ca_defult_ssl_key_dir }}/{{ item }}"
+  with_items:
+  - "{{ ca_key }}"
+
+- name: "copy {{ ca_cert }} to {{ ca_defult_ssl_certs_dir }}"
+  copy: src="{{ ca_distribution_certs_dir }}/{{ item }}" dest="{{ ca_defult_ssl_certs_dir }}/{{ item }}"
+  with_items:
+  - "{{ ca_cert }}"
+
+- shell: "ls -lR {{ ca_defult_ssl_certs_dir }} {{ ca_defult_ssl_key_dir }}"
+  register: ls
+  when: debug is defined
+
+- debug: var=ls.stdout_lines
+  when: debug is defined

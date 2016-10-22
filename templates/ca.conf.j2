@@ -4,9 +4,9 @@ default_ca = {{ shelleg.domain_prefix }}_ca
 [ {{ shelleg.domain_prefix }}_ca ]
 unique_subject = no
 new_certs_dir = .
-certificate = ca.cert
+certificate = {{ ca_cert }}
 database = certindex
-private_key = privkey.pem
+private_key = {{ ca_key }}
 serial = serial
 default_days = 1825
 default_md = sha1
