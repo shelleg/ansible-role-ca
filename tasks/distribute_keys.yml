@@ -3,7 +3,6 @@
 - name: "Ensures {{ ca_defult_ssl_certs_dir }} and {{ ca_defult_ssl_key_dir }} dirs exist"
   file: path="{{ item }}" state=directory owner=root group=root mode=0750 recurse=yes
   with_items:
-  - /etc/pki/tls
   - "{{ ca_defult_ssl_certs_dir }}"
   - "{{ ca_defult_ssl_key_dir }}"
 
@@ -24,17 +23,21 @@
       - "{{ shelleg_hosts.swarm.swarm_workers }}"
       - "{{ shelleg_hosts.swarm.swarm_managers }}"
 
-  when: inventory_hostname == "{{ shelleg.domain_prefix }}-{{ item.cname }}"
+  when: inventory_hostname == "{{ item.cname }}"
 
 # Root CA key/cert
 
 - name: "copy {{ ca_key }} to {{ ca_defult_ssl_key_dir }}"
-  copy: src="{{ ca_distribution_certs_dir }}/{{ item }}" dest="{{ ca_defult_ssl_key_dir }}/{{ item }}"
+  copy:
+    src: "{{ ca_distribution_certs_dir }}/{{ item }}"
+    dest: "{{ ca_defult_ssl_key_dir }}/{{ item }}"
   with_items:
   - "{{ ca_key }}"
 
 - name: "copy {{ ca_cert }} to {{ ca_defult_ssl_certs_dir }}"
-  copy: src="{{ ca_distribution_certs_dir }}/{{ item }}" dest="{{ ca_defult_ssl_certs_dir }}/{{ item }}"
+  copy:
+    src: "{{ ca_distribution_certs_dir }}/{{ item }}"
+    dest: "{{ ca_defult_ssl_certs_dir }}/{{ item }}"
   with_items:
   - "{{ ca_cert }}"
 

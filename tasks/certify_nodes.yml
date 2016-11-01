@@ -1,5 +1,5 @@
 ---
-- name: "Genereate Certs for Infra server || CA server"
+- name: "Generate Certs for Infra server || CA server"
   shell: 'openssl genrsa -out {{ item.cname }}-priv-key.pem 2048'
   args:
     chdir: "{{ ca_certs_dir }}"
