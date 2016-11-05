@@ -13,6 +13,7 @@
       copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_key }}" dest="{{ ca_defult_ssl_key_dir }}/{{ item.ssl_key }}"
       with_items:
       - "{{ shelleg_hosts.infra }}"
+      - "{{ shelleg_hosts.ci }}"
       - "{{ shelleg_hosts.swarm.swarm_workers }}"
       - "{{ shelleg_hosts.swarm.swarm_managers }}"
 
@@ -20,6 +21,7 @@
       copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_cert }}" dest="{{ ca_defult_ssl_certs_dir }}/{{ item.ssl_cert }}"
       with_items:
       - "{{ shelleg_hosts.infra }}"
+      - "{{ shelleg_hosts.ci }}"
       - "{{ shelleg_hosts.swarm.swarm_workers }}"
       - "{{ shelleg_hosts.swarm.swarm_managers }}"
 

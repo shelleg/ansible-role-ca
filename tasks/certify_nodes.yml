@@ -5,15 +5,17 @@
     chdir: "{{ ca_certs_dir }}"
   with_items:
   - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.ci }}"
   - "{{ shelleg_hosts.swarm.swarm_workers }}"
   - "{{ shelleg_hosts.swarm.swarm_managers }}"
 
 - name: "Create certificate request for Infra server || CA server"
-  shell: 'openssl req -subj "/CN={{ item.cname }}" -new -key "{{ item.cname }}"-priv-key.pem -out "{{ item.cname }}".csr'
+  shell: 'openssl req -subj "/CN={{ item.cname }}.{{ ca_domain }}" -new -key "{{ item.cname }}"-priv-key.pem -out "{{ item.cname }}".csr'
   args:
     chdir: "{{ ca_certs_dir }}"
   with_items:
   - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.ci }}"
   - "{{ shelleg_hosts.swarm.swarm_workers }}"
   - "{{ shelleg_hosts.swarm.swarm_managers }}"
 
@@ -23,5 +25,6 @@
     chdir: "{{ ca_certs_dir }}"
   with_items:
   - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.ci }}"
   - "{{ shelleg_hosts.swarm.swarm_workers }}"
   - "{{ shelleg_hosts.swarm.swarm_managers }}"

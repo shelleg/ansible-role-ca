@@ -1,0 +1,23 @@
+---
+
+- name: "Generate wildcard cert Infra server || CA server"
+  shell: 'openssl genrsa -out {{ item }}-priv-key.pem 2048'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_items:
+  - wildcard
+
+- name: "Create wildcard certificate request for *.{{ ca_domain }}"
+  shell: 'openssl req -subj "/CN=\*.{{ ca_domain }}" -new -key "{{ item }}"-priv-key.pem -out "{{ item }}".csr'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_items:
+  - wildcard
+
+
+- name: "Generate the CA trusted certificate"
+  shell: 'sudo openssl x509 -req -days 1825 -in "{{ item }}".csr -CA ca.pem -CAkey ca-priv-key.pem -CAcreateserial -out "{{ item }}"-cert.pem -extensions v3_req -extfile /usr/lib/ssl/openssl.cnf'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_items:
+  - wildcard

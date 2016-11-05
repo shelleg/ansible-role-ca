@@ -3,6 +3,7 @@
   fetch: src="{{ ca_certs_dir }}/{{ item.ssl_key }}" dest="{{ ca_distribution_certs_dir }}/{{ item.ssl_key }}" flat=yes
   with_items:
   - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.ci }}"
   - "{{ shelleg_hosts.swarm.swarm_workers }}"
   - "{{ shelleg_hosts.swarm.swarm_managers }}"
 
@@ -10,6 +11,7 @@
   fetch: src="{{ ca_certs_dir }}/{{ item.ssl_cert }}" dest="{{ ca_distribution_certs_dir }}/{{ item.ssl_cert }}" flat=yes
   with_items:
   - "{{ shelleg_hosts.infra }}"
+  - "{{ shelleg_hosts.ci }}"
   - "{{ shelleg_hosts.swarm.swarm_workers }}"
   - "{{ shelleg_hosts.swarm.swarm_managers }}"
 
@@ -18,3 +20,4 @@
   with_items:
   - "{{ ca_cert }}"
   - "{{ ca_key }}"
+  - wildcard-cert.pem

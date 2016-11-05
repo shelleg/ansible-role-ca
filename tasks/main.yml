@@ -12,3 +12,6 @@
 
 - include: distribute_keys.yml
   when: ca_distribute_keys is defined
+
+- include: wildcard_cert.yml
+  when: ca_wildcard is defined

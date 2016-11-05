@@ -23,6 +23,7 @@ ca_country: IL
 ca_state: Israel
 ca_locality: Israel
 ca_organization: "{{ shelleg.domain_prefix | default('domain.local') }}"
+ca_domain: "{{ shelleg.domain_prefix | default('domain.local') }}"
 ca_organizationalunit: IT
 ca_commonname: "{{ shelleg.domain_prefix | default('domain.local') }}"
 ca_email: "ca@{{ shelleg.domain_prefix | default('domain.local') }}"
