@@ -1,4 +1,13 @@
 ---
+
+- name: "make sure the {{ ca_certs_dir }} is present"
+  file:
+    state: directory
+    path: "{{ ca_certs_dir }}"
+    owner: root
+    group: root
+    mode: 0755
+
 - name: "Generate Certs for Infra server || CA server"
   shell: 'openssl genrsa -out {{ item.cname }}-priv-key.pem 2048'
   args:

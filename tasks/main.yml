@@ -1,7 +1,22 @@
 ---
 # tasks file for ansible-role-ca
+- include_vars: "{{ ansible_os_family }}.yml"
 
-- include: ca-init.yml
+
+- name: "set ca_subject var"
+  set_fact:
+    ca_subject: '/CN={{ ca_commonname }}'
+  when: ca_subject is not defined
+
+- debug: var=ca_subject
+
+- include: ca-validations.yml
+  when: ca_force_create is undefined and inventory_hostsname == "{{ shelleg_hosts.infra[0].cname }}"
+
+- include: ca-conf.yml
+  when: ca_init is defined and ca_force_create == true # defaults to false ...
+
+- include: ca-key_n_cert.yml
   when: ca_init is defined and ca_force_create == true # defaults to false ...
 
 - include: certify_nodes.yml

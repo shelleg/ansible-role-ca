@@ -1,0 +1,64 @@
+---
+
+# Check for CA key existence (so we don't getnerate a new onw on every run)
+- block:
+
+    - name: "Check if ca.key certificate exsists"
+      stat: path="{{ ca_defult_ssl_key_dir }}/{{ ca_key }}"
+      register: __key_file
+
+    - name: "stat __key_file output"
+      debug: var=__key_file
+
+    - name: "msg re {{ ca_defult_ssl_key_dir }}/{{ ca_key }} status"
+      debug: msg="{{ ca_defult_ssl_key_dir }}/{{ ca_key }} is present
+                  - setting fact _ca_key_exists [ internal fact with _ prefix ] to true - this role will not generate a new one"
+      when: __key_file.stat.exists
+
+    - name: "set _ca_key_exists var to true"
+      set_fact:
+        _ca_key_exists: true
+
+  rescue:
+    - name: "rescue block - key exists ..."
+      debug: msg="{{ ca_defult_ssl_key_dir }}/{{ ca_key }} is present
+                  (if you want a new one remove the exsiting one and rerun this role)
+                  - setting fact ca_key_exists to false"
+
+    - name: "set _ca_key_exists var to false"
+      set_fact:
+        _ca_key_exists: false
+
+  always:
+    - name: "Show _ca_key_exists value"
+      debug: msg="variable _ca_key_exists is set to {{ _ca_key_exists }}"
+
+# Check for CA cert existence (so we don't getnerate a new onw on every run)
+- block:
+
+    - name: "Check if ca.pem certificate exsists"
+      stat: path="{{ ca_certs_dir }}/{{ ca_cert }}"
+      register: cert_file
+
+    - name: "Check certificate expiration date [ Expecting more than a week before setting regeneration var ... ]"
+      shell: "openssl x509 -checkend {{ ca_cert_expiration_panic_threshold }} -noout -in {{ ca_certs_dir }}/{{ ca_cert }}"
+      when: cert_file and cert_file.stat.exists
+      register: cert_validity
+
+    - debug: msg="{{ ca_certs_dir }}/{{ ca_cert }} is still valid no need to generate"
+      when: cert_validity and cert_validity.rc == 0
+
+    - set_fact:
+        ca_force_create: false
+        _ca_missing_cert: false
+
+  rescue:
+    - debug: msg="{{ ca_certs_dir }}/{{ ca_cert }} is not valid - ca_force_create will be set"
+    - set_fact:
+        ca_force_create: true
+        _ca_missing_cert: true
+
+  always:
+    - debug: var=_ca_key_exists
+    - debug: var=_ca_missing_cert
+    - debug: var=ca_force_create

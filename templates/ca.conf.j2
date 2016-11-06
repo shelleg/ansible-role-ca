@@ -27,3 +27,43 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
 keyUsage = digitalSignature,keyEncipherment
 extendedKeyUsage = serverAuth,clientAuth
+
+[ req ]
+default_bits            = 2048
+default_keyfile         = privkey.pem
+distinguished_name      = req_distinguished_name
+attributes              = req_attributes
+string_mask = utf8only
+
+[ req_distinguished_name ]
+countryName                     = Country Name (2 letter code)
+countryName_default             = {{ ca_country }}
+countryName_min                 = 2
+countryName_max                 = 2
+
+stateOrProvinceName             = State or Province Name (full name)
+stateOrProvinceName_default     = {{ ca_state }}
+
+localityName                    = Locality Name (eg, city)
+localityName_default						= {{ ca_locality }}
+0.organizationName              = Organization Name (eg, company)
+0.organizationName_default      = {{ ca_organization }}
+
+organizationalUnitName          = Organizational Unit Name (eg, section)
+organizationalUnitName_default  = {{ ca_organizationalunit }}
+
+commonName                      = Common Name (e.g. server FQDN or YOUR name)
+commonName_max                  = 64
+
+
+emailAddress                    = Email Address
+emailAddress_max                = 64
+emailAddress_default 						= {{ ca_email }}
+# SET-ex3                       = SET extension number 3
+
+[ req_attributes ]
+challengePassword               = A challenge password
+challengePassword_min           = 4
+challengePassword_max           = 20
+
+unstructuredName                = An optional company name
