@@ -11,7 +11,7 @@
 - debug: var=ca_subject
 
 - include: ca-validations.yml
-  when: ca_force_create is undefined and inventory_hostsname == "{{ shelleg_hosts.infra[0].cname }}"
+  when: (ca_force_create is undefined) and (inventory_hostsname == hostvars[groups['infra-instances'][0]]['inventory_hostname'])
 
 - include: ca-conf.yml
   when: ca_init is defined and ca_force_create == true # defaults to false ...
@@ -22,11 +22,12 @@
 - include: certify_nodes.yml
   when: ca_certify_nodes is defined and ca_force_certify_nodes # defaults to false ...
 
+- include: wildcard_cert.yml
+  when: ca_wildcard is defined
+
 - include: fetch_keys.yml
   when: ca_fetch_keys is defined
 
 - include: distribute_keys.yml
   when: ca_distribute_keys is defined
 
-- include: wildcard_cert.yml
-  when: ca_wildcard is defined

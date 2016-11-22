@@ -1,31 +1,23 @@
 ---
 
 - name: "Ensures {{ ca_defult_ssl_certs_dir }} and {{ ca_defult_ssl_key_dir }} dirs exist"
-  file: path="{{ item }}" state=directory owner=root group=root mode=0750 recurse=yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+    recurse: yes
   with_items:
   - "{{ ca_defult_ssl_certs_dir }}"
   - "{{ ca_defult_ssl_key_dir }}"
 
+- name: "Distribute inventory_hostname-priv-key.pem to inventory_hostname"
+  copy: src="{{ ca_distribution_certs_dir }}/{{ inventory_hostname }}-priv-key.pem" dest="{{ ca_defult_ssl_key_dir }}/{{ inventory_hostname }}-priv-key.pem"
 
-- block:
+- name: "Distribute inventory_hostname-cert.pem to inventory_hostname"
+  copy: src="{{ ca_distribution_certs_dir }}/{{ inventory_hostname }}-cert.pem" dest="{{ ca_defult_ssl_certs_dir }}/{{ inventory_hostname }}-cert.pem"
 
-    - name: "copy keys from infra to ansible machine for distribution"
-      copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_key }}" dest="{{ ca_defult_ssl_key_dir }}/{{ item.ssl_key }}"
-      with_items:
-      - "{{ shelleg_hosts.infra }}"
-      - "{{ shelleg_hosts.ci }}"
-      - "{{ shelleg_hosts.swarm.swarm_workers }}"
-      - "{{ shelleg_hosts.swarm.swarm_managers }}"
-
-    - name: "copy certs from infra to ansible machine for distribution"
-      copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_cert }}" dest="{{ ca_defult_ssl_certs_dir }}/{{ item.ssl_cert }}"
-      with_items:
-      - "{{ shelleg_hosts.infra }}"
-      - "{{ shelleg_hosts.ci }}"
-      - "{{ shelleg_hosts.swarm.swarm_workers }}"
-      - "{{ shelleg_hosts.swarm.swarm_managers }}"
-
-  when: inventory_hostname == "{{ item.cname }}"
 
 # Root CA key/cert
 
@@ -43,9 +35,14 @@
   with_items:
   - "{{ ca_cert }}"
 
-- shell: "ls -lR {{ ca_defult_ssl_certs_dir }} {{ ca_defult_ssl_key_dir }}"
+- shell: "ls -lR {{ item }}"
+  with_items:
+  - "{{ ca_defult_ssl_key_dir }}/{{ inventory_hostname }}-priv-key.pem"
+  - "{{ ca_defult_ssl_certs_dir }}/{{ inventory_hostname }}-cert.pem"
   register: ls
   when: debug is defined
 
-- debug: var=ls.stdout_lines
+- debug: var=item.stdout_lines
+  with_items:
+  - "{{ ls.results }}"
   when: debug is defined

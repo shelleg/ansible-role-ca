@@ -1,2 +1,2 @@
-pki_cert_dir: /usr/local/share/ca-certificates/
-pki_key_dir: /usr/lib/ssl/private/
+pki_cert_dir: /etc/ssl/certs
+pki_key_dir: /etc/ssl/private

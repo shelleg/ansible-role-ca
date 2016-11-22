@@ -2,15 +2,6 @@
 - name: "ensure openssl is installed"
   apt: name=openssl state=latest
 
-#- name: "delete ca-certs directory"
-#  file:
-#    path: "{{ item }}"
-#    state: absent
-#    owner: root
-#    group: root
-#  with_items:
-#    - "{{ ca_certs_dir }}"
-
 - name: "create configuration directory"
   file:
     path: "{{ item }}"

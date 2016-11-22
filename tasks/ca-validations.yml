@@ -7,10 +7,7 @@
       stat: path="{{ ca_defult_ssl_key_dir }}/{{ ca_key }}"
       register: __key_file
 
-    - name: "stat __key_file output"
-      debug: var=__key_file
-
-    - name: "msg re {{ ca_defult_ssl_key_dir }}/{{ ca_key }} status"
+    - name: "verify {{ ca_defult_ssl_key_dir }}/{{ ca_key }} status"
       debug: msg="{{ ca_defult_ssl_key_dir }}/{{ ca_key }} is present
                   - setting fact _ca_key_exists [ internal fact with _ prefix ] to true - this role will not generate a new one"
       when: __key_file.stat.exists

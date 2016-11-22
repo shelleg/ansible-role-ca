@@ -6,8 +6,8 @@
 #ca_force_create:
 ca_force_certify_nodes: false
 # see "{{ ansible_os_family }}.yml"
-ca_defult_ssl_certs_dir: "{{ pki_cert_dir | d('/etc/pki/tls/certs') }}"
-ca_defult_ssl_key_dir: "{{ pki_key_dir | d('/etc/pki/tls/private') }}"
+ca_defult_ssl_certs_dir: "{{ pki_cert_dir | d('/etc/ssl/certs') }}"
+ca_defult_ssl_key_dir: "{{ pki_key_dir | d('/etc/ssl/private') }}"
 
 # how long should remain before we generate a new CA cert ?
 ca_cert_expiration_panic_threshold: 604800 # 1 week
