@@ -1,6 +1,11 @@
 ---
-- name: "ensure openssl is installed"
+- name: "ensure openssl is installed (Debian)"
   apt: name=openssl state=latest
+  when: ansible_os_family == "Debian"
+  
+- name: "ensure openssl is installed (RedHat)"
+  yum: name=openssl state=latest
+  when: ansible_os_family == "RedHat"
 
 - name: "create configuration directory"
   file:
