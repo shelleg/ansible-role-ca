@@ -12,5 +12,9 @@
   with_items:
   - "{{ ca_cert }}"
   - "{{ ca_key }}"
+- name: "copy wildcard ca.pem ca-priv-key.pem"
+  fetch: src="{{ ca_certs_dir }}/{{ item }}" dest="{{ ca_distribution_certs_dir }}/{{ item }}" flat=yes
+  with_items:
   - wildcard-cert.pem
   - wildcard-priv-key.pem
+  when: ca_wildcard is defined
